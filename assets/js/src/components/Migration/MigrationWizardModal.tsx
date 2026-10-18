@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Modal,
   Select,
@@ -8,19 +8,17 @@ import {
   Descriptions,
   Progress,
   Switch,
-  Space,
   Table,
   message,
   Card,
-  Divider,
   Tag,
 } from 'antd';
 import {
   SyncOutlined,
   CheckCircleFilled,
-  WarningOutlined,
   FileDoneOutlined,
-  ExclamationCircleOutlined,
+  SwapOutlined,
+  InfoCircleOutlined,
 } from '@ant-design/icons';
 import { StorageConfiguration, MigrationJob, MigrationPreflightReport } from '../../types';
 import { CloudStorageApi } from '../../services/api';
@@ -52,6 +50,19 @@ export const MigrationWizardModal: React.FC<Props> = ({
   const [migrating, setMigrating] = useState(false);
   const [activeJob, setActiveJob] = useState<MigrationJob | null>(null);
 
+  useEffect(() => {
+    if (open) {
+      if (defaultTargetId) {
+        setTargetId(defaultTargetId);
+      }
+    } else {
+      setPreflight(null);
+      setActiveJob(null);
+      setScanning(false);
+      setMigrating(false);
+    }
+  }, [open, defaultTargetId]);
+
   const handlePreflightScan = async () => {
     if (!targetId) {
       message.error('Please select a destination storage profile.');
@@ -77,7 +88,7 @@ export const MigrationWizardModal: React.FC<Props> = ({
     try {
       const job = await CloudStorageApi.startMigration(targetId, sourceId, dryRun);
       setActiveJob(job);
-      message.success(dryRun ? 'Dry run simulation finished.' : 'Migration process completed.');
+      message.success(dryRun ? 'Dry run simulation finished.' : 'Migration completed successfully.');
       onMigrationComplete();
     } catch (e: any) {
       message.error(e.message || 'Migration failed to execute.');
@@ -95,27 +106,33 @@ export const MigrationWizardModal: React.FC<Props> = ({
     { value: null, label: 'Current Active Storage Backend' },
     ...configurations.map((c) => ({
       value: c.id,
-      label: `${c.display_name} (${c.provider.toUpperCase()})`,
+      label: `${c.display_name} (${c.provider.toUpperCase()} - ${c.bucket_or_container})`,
     })),
   ];
 
   return (
     <Modal
-      title="Asset Migration Assistant"
+      title={
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <SwapOutlined style={{ color: '#722ed1' }} />
+          <span>Asset Migration Assistant</span>
+        </div>
+      }
       open={open}
       onCancel={onClose}
-      width={750}
+      width={780}
       footer={null}
+      destroyOnClose
     >
-      <Paragraph type="secondary">
-        Safely copy existing Pimcore asset binaries from one storage backend to another. Existing files will never be deleted or overwritten without verification.
+      <Paragraph type="secondary" style={{ fontSize: 13, marginBottom: 16 }}>
+        Safely copy existing Pimcore asset binaries from one storage provider to another. Existing files are preserved and never deleted automatically.
       </Paragraph>
 
       {!activeJob ? (
         <>
-          <Card size="small" style={{ marginBottom: 16 }}>
-            <div style={{ marginBottom: 12 }}>
-              <Text strong>Source Storage:</Text>
+          <Card size="small" style={{ marginBottom: 16, borderRadius: 8 }}>
+            <div style={{ marginBottom: 14 }}>
+              <Text strong>Source Storage Location:</Text>
               <Select
                 style={{ width: '100%', marginTop: 4 }}
                 value={sourceId}
@@ -124,8 +141,8 @@ export const MigrationWizardModal: React.FC<Props> = ({
               />
             </div>
 
-            <div>
-              <Text strong>Destination Storage:</Text>
+            <div style={{ marginBottom: 14 }}>
+              <Text strong>Destination Cloud Storage:</Text>
               <Select
                 style={{ width: '100%', marginTop: 4 }}
                 placeholder="Select target cloud storage profile"
@@ -135,12 +152,12 @@ export const MigrationWizardModal: React.FC<Props> = ({
               />
             </div>
 
-            <div style={{ marginTop: 12, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '8px 0' }}>
               <div>
                 <Text strong>Dry-Run Simulation Only</Text>
                 <br />
                 <Text type="secondary" style={{ fontSize: 12 }}>
-                  Scans and verifies files without actually writing data to destination.
+                  Scans and verifies target access without writing data.
                 </Text>
               </div>
               <Switch checked={dryRun} onChange={setDryRun} />
@@ -152,6 +169,7 @@ export const MigrationWizardModal: React.FC<Props> = ({
                 loading={scanning}
                 onClick={handlePreflightScan}
                 disabled={!targetId}
+                style={{ borderRadius: 6 }}
               >
                 Run Preflight Scan
               </Button>
@@ -159,10 +177,10 @@ export const MigrationWizardModal: React.FC<Props> = ({
           </Card>
 
           {preflight && (
-            <Card title="Preflight Scan Results" size="small" style={{ marginBottom: 16 }}>
+            <Card title="Preflight Scan Results" size="small" style={{ marginBottom: 16, borderRadius: 8 }}>
               <Descriptions bordered size="small" column={2}>
                 <Descriptions.Item label="Source Storage">
-                  {preflight.source?.display_name || 'Local Storage'}
+                  {preflight.source?.display_name || 'Active Storage Backend'}
                 </Descriptions.Item>
                 <Descriptions.Item label="Destination">
                   {preflight.target?.display_name}
@@ -178,9 +196,9 @@ export const MigrationWizardModal: React.FC<Props> = ({
                 </Descriptions.Item>
                 <Descriptions.Item label="Target Reachable">
                   {preflight.report.target_accessible ? (
-                    <Tag color="success">YES</Tag>
+                    <Tag color="success">ACCESSIBLE</Tag>
                   ) : (
-                    <Tag color="error">NO (Check Credentials)</Tag>
+                    <Tag color="error">UNREACHABLE (Check Credentials)</Tag>
                   )}
                 </Descriptions.Item>
               </Descriptions>
@@ -188,9 +206,10 @@ export const MigrationWizardModal: React.FC<Props> = ({
               <Alert
                 type="info"
                 showIcon
-                message="Resumable & Safe"
-                description="If any files already exist on the destination with matching size and checksums, they will be skipped automatically."
-                style={{ margin: '16px 0' }}
+                icon={<InfoCircleOutlined />}
+                message="Deduplication & Safe Resumption"
+                description="Files that already exist on the target storage with matching size and checksums will be skipped automatically."
+                style={{ margin: '14px 0', borderRadius: 6 }}
               />
 
               <div style={{ textAlign: 'right' }}>
@@ -200,26 +219,32 @@ export const MigrationWizardModal: React.FC<Props> = ({
                   icon={migrating ? <SyncOutlined spin /> : <FileDoneOutlined />}
                   loading={migrating}
                   onClick={handleStartMigration}
-                  style={{ backgroundColor: dryRun ? '#1677ff' : '#52c41a', borderColor: dryRun ? '#1677ff' : '#52c41a' }}
+                  disabled={!preflight.report.target_accessible}
+                  style={{
+                    borderRadius: 6,
+                    fontWeight: 600,
+                    backgroundColor: dryRun ? '#1677ff' : '#16a34a',
+                    borderColor: dryRun ? '#1677ff' : '#16a34a',
+                  }}
                 >
-                  {dryRun ? 'Start Dry Run' : 'Start Migration'}
+                  {dryRun ? 'Start Dry-Run Simulation' : 'Execute Asset Migration'}
                 </Button>
               </div>
             </Card>
           )}
         </>
       ) : (
-        <Card title="Migration Execution Report" size="small">
+        <Card title="Migration Execution Report" size="small" style={{ borderRadius: 8 }}>
           <Alert
             type={activeJob.status === 'completed' ? 'success' : activeJob.status === 'failed' ? 'error' : 'info'}
             showIcon
             message={`Migration Status: ${activeJob.status.toUpperCase()}`}
             description={
               activeJob.is_dry_run
-                ? 'Dry run simulation finished without writing to target.'
+                ? 'Dry run simulation finished without writing files to target.'
                 : 'Asset binaries copied to target cloud storage.'
             }
-            style={{ marginBottom: 16 }}
+            style={{ marginBottom: 16, borderRadius: 6 }}
           />
 
           <Progress percent={activeJob.progress_percent} status="normal" style={{ marginBottom: 16 }} />
@@ -229,7 +254,9 @@ export const MigrationWizardModal: React.FC<Props> = ({
               {activeJob.processed_files} / {activeJob.total_files}
             </Descriptions.Item>
             <Descriptions.Item label="Failed Files">
-              {activeJob.failed_files}
+              <span style={{ color: activeJob.failed_files > 0 ? '#dc2626' : undefined, fontWeight: 600 }}>
+                {activeJob.failed_files}
+              </span>
             </Descriptions.Item>
             <Descriptions.Item label="Source ➔ Target">
               {activeJob.source_name} ➔ {activeJob.target_name}

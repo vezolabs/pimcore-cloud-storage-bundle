@@ -6,13 +6,15 @@ import {
   WarningFilled,
   CloseCircleFilled,
   ThunderboltOutlined,
-  SettingOutlined,
   SyncOutlined,
-  FolderOpenOutlined,
   DatabaseOutlined,
   SafetyCertificateOutlined,
+  ArrowRightOutlined,
+  PlusOutlined,
+  SwapOutlined,
+  SlidersOutlined,
 } from '@ant-design/icons';
-import { StorageOverview, StorageConfiguration } from '../../types';
+import { StorageOverview } from '../../types';
 
 const { Title, Paragraph, Text } = Typography;
 
@@ -57,43 +59,56 @@ export const StorageDashboard: React.FC<Props> = ({
       <Card
         style={{
           marginBottom: 24,
+          borderRadius: 10,
           background: isCloud
-            ? 'linear-gradient(135deg, #f0f7ff 0%, #ffffff 100%)'
-            : '#fafafa',
-          borderColor: isCloud ? '#91caff' : '#d9d9d9',
-          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.05)',
+            ? 'linear-gradient(135deg, #f5f3ff 0%, #ffffff 100%)'
+            : '#ffffff',
+          borderColor: isCloud ? '#d8b4fe' : '#e2e8f0',
+          boxShadow: '0 2px 10px rgba(0, 0, 0, 0.04)',
         }}
       >
-        <Row justify="space-between" align="middle" gutter={[16, 16]}>
-          <Col xs={24} md={16}>
-            <Space align="start" size={16}>
+        <Row justify="space-between" align="middle" gutter={[20, 20]}>
+          <Col xs={24} lg={16}>
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: 16 }}>
               <div
                 style={{
-                  fontSize: 38,
-                  color: isCloud ? '#1677ff' : '#8c8c8c',
-                  padding: 8,
-                  backgroundColor: '#fff',
-                  borderRadius: 8,
-                  boxShadow: '0 2px 6px rgba(0,0,0,0.06)',
+                  width: 52,
+                  height: 52,
+                  minWidth: 52,
+                  borderRadius: 12,
+                  background: isCloud ? '#f3e8ff' : '#f1f5f9',
+                  color: isCloud ? '#722ed1' : '#64748b',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: 26,
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
                 }}
               >
                 <CloudServerOutlined />
               </div>
-              <div>
-                <Space align="center">
-                  <Title level={4} style={{ margin: 0 }}>
+
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 8, marginBottom: 4 }}>
+                  <Title level={4} style={{ margin: 0, color: '#0f172a' }}>
                     {active?.display_name || 'Local Application Storage'}
                   </Title>
-                  <Tag color={isCloud ? 'blue' : 'default'} style={{ fontSize: 13, padding: '2px 8px' }}>
-                    {active ? active.provider.toUpperCase() : 'LOCAL'}
+                  <Tag color={isCloud ? 'purple' : 'default'} style={{ fontSize: 12, fontWeight: 600 }}>
+                    {active ? active.provider.toUpperCase() : 'LOCAL FILESYSTEM'}
                   </Tag>
                   {getStatusBadge(active?.last_test_status)}
-                </Space>
+                </div>
 
-                <Paragraph style={{ margin: '6px 0 0 0', color: '#555' }}>
+                <Paragraph style={{ margin: '6px 0 4px 0', color: '#475569', fontSize: 13 }}>
                   {isCloud ? (
                     <>
-                      Target Bucket: <Text code strong>{active?.bucket_or_container}</Text> | Region/Project: <Text strong>{active?.region_or_project || 'Default'}</Text> | Path Prefix: <Text code>{active?.path_prefix || 'Root'}</Text>
+                      Target Bucket: <Text code strong>{active?.bucket_or_container}</Text>
+                      {active?.region_or_project && (
+                        <> | Region/Project: <Text strong>{active.region_or_project}</Text></>
+                      )}
+                      {active?.path_prefix && (
+                        <> | Prefix: <Text code>/{active.path_prefix}</Text></>
+                      )}
                     </>
                   ) : (
                     'Assets are currently stored on the local web server filesystem (/public/var/assets).'
@@ -102,7 +117,7 @@ export const StorageDashboard: React.FC<Props> = ({
 
                 {active?.last_tested_at && (
                   <Text type="secondary" style={{ fontSize: 12 }}>
-                    Last test verified: {new Date(active.last_tested_at).toLocaleString()}
+                    Last connection verified: {new Date(active.last_tested_at).toLocaleString()}
                   </Text>
                 )}
 
@@ -110,30 +125,34 @@ export const StorageDashboard: React.FC<Props> = ({
                   <Alert
                     type="error"
                     showIcon
-                    message="Last Connection Error"
+                    message="Last Connection Test Failed"
                     description={active.last_test_message}
-                    style={{ marginTop: 8 }}
+                    style={{ marginTop: 10, borderRadius: 6 }}
                   />
                 )}
               </div>
-            </Space>
+            </div>
           </Col>
 
-          <Col xs={24} md={8} style={{ textAlign: 'right' }}>
-            <Space wrap>
-              {active?.id && (
-                <Button
-                  icon={<ThunderboltOutlined />}
-                  loading={testingActive}
-                  onClick={() => onTestActive(active.id!)}
-                >
-                  Test Connection
-                </Button>
-              )}
-              <Button type="primary" onClick={onNavigateToWizard}>
-                + Add Cloud Provider
+          <Col xs={24} lg={8} style={{ display: 'flex', justifyContent: 'flex-end', flexWrap: 'wrap', gap: 8 }}>
+            {active?.id && (
+              <Button
+                icon={<ThunderboltOutlined />}
+                loading={testingActive}
+                onClick={() => onTestActive(active.id!)}
+                style={{ borderRadius: 6 }}
+              >
+                Test Connection
               </Button>
-            </Space>
+            )}
+            <Button
+              type="primary"
+              icon={<PlusOutlined />}
+              onClick={onNavigateToWizard}
+              style={{ borderRadius: 6, fontWeight: 600 }}
+            >
+              Add Cloud Provider
+            </Button>
           </Col>
         </Row>
       </Card>
@@ -156,92 +175,123 @@ export const StorageDashboard: React.FC<Props> = ({
                 <span>
                   Processed {overview.active_migration.processed_files} / {overview.active_migration.total_files} files
                 </span>
-                <Button size="small" type="link" onClick={onNavigateToMigration}>
-                  View Migration Details ➔
+                <Button size="small" type="link" onClick={onNavigateToMigration} style={{ padding: 0 }}>
+                  View Migration Details <ArrowRightOutlined />
                 </Button>
               </div>
             </div>
           }
-          style={{ marginBottom: 24 }}
+          style={{ marginBottom: 24, borderRadius: 8 }}
         />
       )}
 
       {/* KPI METRICS ROW */}
       <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
-        <Col xs={24} sm={12} md={6}>
-          <Card size="small">
+        <Col xs={24} sm={12} lg={6}>
+          <Card size="small" style={{ borderRadius: 8 }}>
             <Statistic
-              title="Configured Storage Profiles"
+              title="Storage Profiles"
               value={overview.total_configurations}
               prefix={<DatabaseOutlined style={{ color: '#1677ff' }} />}
             />
             <div style={{ marginTop: 8 }}>
               <Button type="link" size="small" onClick={onNavigateToConfigs} style={{ padding: 0 }}>
-                Manage Profiles ➔
+                Manage Profiles <ArrowRightOutlined />
               </Button>
             </div>
           </Card>
         </Col>
 
-        <Col xs={24} sm={12} md={6}>
-          <Card size="small">
+        <Col xs={24} sm={12} lg={6}>
+          <Card size="small" style={{ borderRadius: 8 }}>
             <Statistic
               title="Verified Connections"
               value={overview.tested_successful}
-              valueStyle={{ color: '#52c41a' }}
-              prefix={<CheckCircleFilled style={{ color: '#52c41a' }} />}
+              valueStyle={{ color: '#16a34a' }}
+              prefix={<CheckCircleFilled style={{ color: '#16a34a' }} />}
             />
             <Text type="secondary" style={{ fontSize: 12 }}>Ready for asset workloads</Text>
           </Card>
         </Col>
 
-        <Col xs={24} sm={12} md={6}>
-          <Card size="small">
+        <Col xs={24} sm={12} lg={6}>
+          <Card size="small" style={{ borderRadius: 8 }}>
             <Statistic
               title="Connection Failures"
               value={overview.tested_failed}
-              valueStyle={{ color: overview.tested_failed > 0 ? '#ff4d4f' : '#8c8c8c' }}
-              prefix={<CloseCircleFilled style={{ color: overview.tested_failed > 0 ? '#ff4d4f' : '#bfbfbf' }} />}
+              valueStyle={{ color: overview.tested_failed > 0 ? '#dc2626' : '#64748b' }}
+              prefix={<CloseCircleFilled style={{ color: overview.tested_failed > 0 ? '#dc2626' : '#cbd5e1' }} />}
             />
             <Text type="secondary" style={{ fontSize: 12 }}>Profiles requiring attention</Text>
           </Card>
         </Col>
 
-        <Col xs={24} sm={12} md={6}>
-          <Card size="small">
+        <Col xs={24} sm={12} lg={6}>
+          <Card size="small" style={{ borderRadius: 8 }}>
             <Statistic
               title="System Health"
               value={overview.status.toUpperCase()}
-              valueStyle={{ color: overview.status === 'healthy' ? '#52c41a' : '#faad14' }}
-              prefix={<SafetyCertificateOutlined style={{ color: overview.status === 'healthy' ? '#52c41a' : '#faad14' }} />}
+              valueStyle={{ color: overview.status === 'healthy' ? '#16a34a' : '#d97706' }}
+              prefix={<SafetyCertificateOutlined style={{ color: overview.status === 'healthy' ? '#16a34a' : '#d97706' }} />}
             />
             <div style={{ marginTop: 8 }}>
               <Button type="link" size="small" onClick={onOpenDiagnostics} style={{ padding: 0 }}>
-                Diagnostics ➔
+                System Diagnostics <ArrowRightOutlined />
               </Button>
             </div>
           </Card>
         </Col>
       </Row>
 
-      {/* AVAILABLE PROVIDERS OVERVIEW */}
-      <Card title="Available Storage Adapters">
+      {/* QUICK ACTIONS & STORAGE ADAPTERS */}
+      <Card
+        title="Supported Cloud Storage Adapters"
+        extra={
+          <Space>
+            <Button size="small" icon={<SwapOutlined />} onClick={onNavigateToMigration}>
+              Migration Assistant
+            </Button>
+            <Button size="small" icon={<SlidersOutlined />} onClick={onOpenDiagnostics}>
+              Diagnostics
+            </Button>
+          </Space>
+        }
+        style={{ borderRadius: 8 }}
+      >
         <Row gutter={[16, 16]}>
           {overview.available_providers.map((p) => (
             <Col xs={24} md={8} key={p.key}>
-              <Card type="inner" title={p.name} size="small" style={{ height: '100%' }}>
-                <Paragraph type="secondary" style={{ fontSize: 13, minHeight: 40 }}>
-                  {p.description}
-                </Paragraph>
+              <div
+                style={{
+                  border: '1px solid #e2e8f0',
+                  borderRadius: 8,
+                  padding: 16,
+                  height: '100%',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
+                  background: '#fafafa',
+                  boxSizing: 'border-box',
+                }}
+              >
+                <div>
+                  <Title level={5} style={{ margin: '0 0 6px 0', color: '#0f172a' }}>
+                    {p.name}
+                  </Title>
+                  <Paragraph type="secondary" style={{ fontSize: 13, minHeight: 48, marginBottom: 12 }}>
+                    {p.description}
+                  </Paragraph>
+                </div>
                 <Button
                   size="small"
-                  type="dashed"
+                  type="primary"
+                  ghost
                   onClick={onNavigateToWizard}
-                  style={{ width: '100%' }}
+                  style={{ width: '100%', borderRadius: 6 }}
                 >
                   Configure {p.name.split(' ')[0]}
                 </Button>
-              </Card>
+              </div>
             </Col>
           ))}
         </Row>

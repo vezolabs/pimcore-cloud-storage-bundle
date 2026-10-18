@@ -1,6 +1,14 @@
 import React from 'react';
-import { Card, Row, Col, Typography, Tag, Space, Alert } from 'antd';
-import { CloudServerOutlined, WindowsOutlined, GoogleOutlined, InfoCircleOutlined, CheckCircleFilled } from '@ant-design/icons';
+import { Card, Row, Col, Typography, Tag, Button, Alert } from 'antd';
+import {
+  CloudServerOutlined,
+  WindowsOutlined,
+  GoogleOutlined,
+  InfoCircleOutlined,
+  CheckCircleFilled,
+  CheckOutlined,
+  SafetyCertificateOutlined,
+} from '@ant-design/icons';
 
 const { Title, Paragraph, Text } = Typography;
 
@@ -14,51 +22,71 @@ export const Step1ProviderSelect: React.FC<Props> = ({ selectedProvider, onSelec
     {
       key: 's3' as const,
       title: 'Amazon S3 & S3-Compatible',
-      subtitle: 'AWS S3, MinIO, Ceph, Cloudflare R2, Wasabi, DigitalOcean',
-      description: 'The industry-standard object storage service. Highly scalable, secure, and compatible with dozens of cloud and on-premise storage solutions.',
-      icon: <CloudServerOutlined style={{ fontSize: 36, color: '#ff9900' }} />,
-      badge: 'Popular',
-      color: '#fff7e6',
-      border: selectedProvider === 's3' ? '#ff9900' : '#d9d9d9',
+      subtitle: 'AWS, MinIO, Ceph, Cloudflare R2, Wasabi',
+      badge: 'Most Popular',
+      badgeColor: 'gold',
+      description: 'The industry-standard object storage service. Highly scalable and compatible with AWS and private cloud storage.',
+      highlights: [
+        'Direct asset streaming & chunked uploads',
+        'IAM Roles, Workload Identity, or Access Keys',
+        'Custom endpoint URLs supported (MinIO, R2)',
+      ],
+      icon: <CloudServerOutlined style={{ fontSize: 28, color: '#d46b08' }} />,
+      iconBg: '#fff7e6',
+      accentColor: '#fa8c16',
     },
     {
       key: 'azure' as const,
       title: 'Microsoft Azure Blob Storage',
       subtitle: 'Azure Storage Accounts & Containers',
-      description: 'Massively scalable object storage for cloud-native workloads, analytics, and enterprise Microsoft cloud infrastructure.',
-      icon: <WindowsOutlined style={{ fontSize: 36, color: '#0078d4' }} />,
       badge: 'Enterprise',
-      color: '#e6f7ff',
-      border: selectedProvider === 'azure' ? '#0078d4' : '#d9d9d9',
+      badgeColor: 'blue',
+      description: 'Massively scalable object storage engineered for enterprise workloads and Microsoft cloud infrastructure.',
+      highlights: [
+        'Secure block blob storage architecture',
+        'Connection String or Account Key authentication',
+        'Azure Managed Identity support',
+      ],
+      icon: <WindowsOutlined style={{ fontSize: 28, color: '#0958d9' }} />,
+      iconBg: '#e6f4ff',
+      accentColor: '#1677ff',
     },
     {
       key: 'gcs' as const,
-      title: 'Google Cloud Storage (GCS)',
+      title: 'Google Cloud Storage',
       subtitle: 'Google Cloud Platform Buckets',
-      description: 'Unified object storage from Google Cloud, offering global edge caching, high availability, and direct integration with GCP services.',
-      icon: <GoogleOutlined style={{ fontSize: 36, color: '#4285f4' }} />,
       badge: 'High Performance',
-      color: '#f0f5ff',
-      border: selectedProvider === 'gcs' ? '#4285f4' : '#d9d9d9',
+      badgeColor: 'purple',
+      description: 'Unified object storage from Google Cloud, offering global edge caching, high availability, and low latency.',
+      highlights: [
+        'High-speed streaming with resumable uploads',
+        'Service Account JSON Key authentication',
+        'Application Default Credentials (ADC) support',
+      ],
+      icon: <GoogleOutlined style={{ fontSize: 28, color: '#531dab' }} />,
+      iconBg: '#f9f0ff',
+      accentColor: '#722ed1',
     },
   ];
 
   return (
-    <div style={{ maxWidth: 900, margin: '0 auto' }}>
-      <div style={{ textAlign: 'center', marginBottom: 28 }}>
-        <Title level={4}>Choose Your Cloud Storage Provider</Title>
-        <Paragraph type="secondary" style={{ fontSize: 15 }}>
-          Cloud storage keeps your Pimcore asset binaries safely in an external object storage service rather than relying exclusively on the local web server filesystem.
+    <div style={{ maxWidth: 960, margin: '0 auto' }}>
+      <div style={{ textAlign: 'center', marginBottom: 24 }}>
+        <Title level={4} style={{ margin: '0 0 8px 0', color: '#1e293b' }}>
+          Choose Your Cloud Storage Provider
+        </Title>
+        <Paragraph type="secondary" style={{ fontSize: 14, maxWidth: 650, margin: '0 auto' }}>
+          Store your Pimcore asset binaries safely in external cloud object storage rather than relying exclusively on the local web server filesystem.
         </Paragraph>
       </div>
 
       <Alert
-        message="Non-Destructive Setup"
-        description="Connecting a cloud storage provider does not alter your existing database assets, metadata, or relations. You will be able to test the connection and migrate files safely before activating."
+        message="Safe & Non-Destructive Setup"
+        description="Connecting a cloud storage provider does not alter your existing database assets, metadata, relations, or local files. You can test live connections and verify operations safely before activating."
         type="info"
         showIcon
-        icon={<InfoCircleOutlined />}
-        style={{ marginBottom: 24 }}
+        icon={<SafetyCertificateOutlined style={{ color: '#1677ff' }} />}
+        style={{ marginBottom: 24, borderRadius: 8 }}
       />
 
       <Row gutter={[20, 20]}>
@@ -66,43 +94,121 @@ export const Step1ProviderSelect: React.FC<Props> = ({ selectedProvider, onSelec
           const isSelected = selectedProvider === p.key;
           return (
             <Col xs={24} md={8} key={p.key}>
-              <Card
-                hoverable
+              <div
                 onClick={() => onSelect(p.key)}
                 style={{
                   height: '100%',
-                  borderColor: isSelected ? p.border : '#e8e8e8',
-                  borderWidth: isSelected ? 2 : 1,
-                  boxShadow: isSelected ? '0 4px 14px rgba(0, 0, 0, 0.1)' : 'none',
-                  backgroundColor: isSelected ? '#fafafa' : '#fff',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
+                  borderRadius: 10,
+                  border: isSelected ? '2px solid #722ed1' : '1px solid #e2e8f0',
+                  backgroundColor: isSelected ? '#faf5ff' : '#ffffff',
+                  boxShadow: isSelected
+                    ? '0 6px 18px rgba(114, 46, 209, 0.12)'
+                    : '0 2px 6px rgba(0, 0, 0, 0.03)',
+                  padding: '22px 20px',
                   cursor: 'pointer',
                   position: 'relative',
                   transition: 'all 0.2s ease',
+                  boxSizing: 'border-box',
                 }}
               >
                 {isSelected && (
-                  <CheckCircleFilled
+                  <div
                     style={{
                       position: 'absolute',
                       top: 14,
                       right: 14,
-                      fontSize: 20,
-                      color: p.border,
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 4,
+                      background: '#722ed1',
+                      color: '#ffffff',
+                      fontSize: 12,
+                      fontWeight: 600,
+                      padding: '2px 8px',
+                      borderRadius: 12,
                     }}
-                  />
-                )}
-                <div style={{ marginBottom: 16 }}>{p.icon}</div>
-                <Space orientation="vertical" size={4} style={{ width: '100%' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <Text strong style={{ fontSize: 16 }}>{p.title}</Text>
-                    <Tag color="blue">{p.badge}</Tag>
+                  >
+                    <CheckCircleFilled /> Selected
                   </div>
-                  <Text type="secondary" style={{ fontSize: 12 }}>{p.subtitle}</Text>
-                  <Paragraph style={{ marginTop: 12, fontSize: 13, color: '#555' }}>
+                )}
+
+                <div>
+                  {/* Icon & Badge */}
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+                    <div
+                      style={{
+                        width: 52,
+                        height: 52,
+                        borderRadius: 10,
+                        backgroundColor: p.iconBg,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      }}
+                    >
+                      {p.icon}
+                    </div>
+                    {!isSelected && <Tag color={p.badgeColor}>{p.badge}</Tag>}
+                  </div>
+
+                  {/* Title & Subtitle */}
+                  <div style={{ marginBottom: 10 }}>
+                    <Title level={5} style={{ margin: '0 0 4px 0', color: '#0f172a' }}>
+                      {p.title}
+                    </Title>
+                    <Text type="secondary" style={{ fontSize: 12 }}>
+                      {p.subtitle}
+                    </Text>
+                  </div>
+
+                  {/* Description */}
+                  <Paragraph style={{ fontSize: 13, color: '#475569', lineHeight: 1.5, marginBottom: 16 }}>
                     {p.description}
                   </Paragraph>
-                </Space>
-              </Card>
+
+                  {/* Highlights */}
+                  <div style={{ borderTop: '1px solid #f1f5f9', paddingTop: 12, marginBottom: 16 }}>
+                    {p.highlights.map((h, idx) => (
+                      <div
+                        key={idx}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'flex-start',
+                          gap: 6,
+                          fontSize: 12,
+                          color: '#334155',
+                          marginBottom: 6,
+                        }}
+                      >
+                        <CheckOutlined style={{ color: '#16a34a', fontSize: 12, marginTop: 3 }} />
+                        <span>{h}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Bottom Action Button */}
+                <Button
+                  type={isSelected ? 'primary' : 'default'}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onSelect(p.key);
+                  }}
+                  style={{
+                    width: '100%',
+                    borderRadius: 6,
+                    height: 38,
+                    fontWeight: 600,
+                    backgroundColor: isSelected ? '#722ed1' : undefined,
+                    borderColor: isSelected ? '#722ed1' : undefined,
+                  }}
+                >
+                  {isSelected ? 'Selected Provider' : `Choose ${p.title.split(' ')[0]}`}
+                </Button>
+              </div>
             </Col>
           );
         })}

@@ -46,12 +46,12 @@ function registerCloudStorage(container: any) {
     ]);
 
     if (mainNavRegistry && typeof mainNavRegistry.registerMainNavItem === 'function') {
-      // Primary entry under System
+      // Primary: Parallel to System at top level
       mainNavRegistry.registerMainNavItem({
-        path: 'System/Vezo Labs : Cloud Storage',
-        label: 'Vezo Labs : Cloud Storage',
-        order: 1050,
-        icon: 'upload-cloud',
+        path: 'Cloud Storage',
+        label: 'Cloud Storage',
+        order: 830,
+        icon: 'cloud',
         widgetConfig: {
           name: 'cloud-storage',
           id: 'cloud-storage',
@@ -61,18 +61,18 @@ function registerCloudStorage(container: any) {
             label: 'Vezo Labs : Cloud Storage',
             icon: {
               type: 'name',
-              value: 'upload-cloud',
+              value: 'cloud',
             },
           },
         },
       });
 
-      // Entry under Settings
+      // Secondary: Under System menu
       mainNavRegistry.registerMainNavItem({
-        path: 'Settings/Vezo Labs : Cloud Storage',
-        label: 'Vezo Labs : Cloud Storage',
-        order: 1050,
-        icon: 'upload-cloud',
+        path: 'System/Cloud Storage',
+        label: 'Cloud Storage',
+        order: 1080,
+        icon: 'cloud',
         widgetConfig: {
           name: 'cloud-storage',
           id: 'cloud-storage',
@@ -82,7 +82,7 @@ function registerCloudStorage(container: any) {
             label: 'Vezo Labs : Cloud Storage',
             icon: {
               type: 'name',
-              value: 'upload-cloud',
+              value: 'cloud',
             },
           },
         },
@@ -90,10 +90,10 @@ function registerCloudStorage(container: any) {
 
       // Secondary: Under AssetManagement
       mainNavRegistry.registerMainNavItem({
-        path: 'AssetManagement/Vezo Labs : Cloud Storage',
-        label: 'Vezo Labs : Cloud Storage',
+        path: 'AssetManagement/Cloud Storage',
+        label: 'Cloud Storage',
         order: 1050,
-        icon: 'upload-cloud',
+        icon: 'cloud',
         widgetConfig: {
           name: 'cloud-storage',
           id: 'cloud-storage',
@@ -103,7 +103,7 @@ function registerCloudStorage(container: any) {
             label: 'Vezo Labs : Cloud Storage',
             icon: {
               type: 'name',
-              value: 'upload-cloud',
+              value: 'cloud',
             },
           },
         },

@@ -44,12 +44,20 @@ export const SetupWizard: React.FC<Props> = ({ onFinish, onCancel }) => {
   const handleProviderSelect = (provider: 's3' | 'azure' | 'gcs') => {
     let authType = 'access_keys';
     let defaultName = `${provider}-cloud-storage`;
-    let defaultDisplay = provider === 's3' ? 'Amazon S3 Storage' : provider === 'azure' ? 'Azure Blob Storage' : 'Google Cloud Storage';
+    let defaultDisplay =
+      provider === 's3'
+        ? 'Amazon S3 Storage'
+        : provider === 'azure'
+        ? 'Microsoft Azure Storage'
+        : 'Google Cloud Storage';
 
+    let regionOrProject = 'us-east-1';
     if (provider === 'azure') {
       authType = 'connection_string';
+      regionOrProject = '';
     } else if (provider === 'gcs') {
       authType = 'service_account_json';
+      regionOrProject = '';
     }
 
     setFormData((prev: any) => ({
@@ -58,7 +66,9 @@ export const SetupWizard: React.FC<Props> = ({ onFinish, onCancel }) => {
       auth_type: authType,
       name: defaultName,
       display_name: defaultDisplay,
+      region_or_project: regionOrProject,
     }));
+    setTestResult(null);
     setCurrentStep(1);
   };
 
@@ -77,10 +87,67 @@ export const SetupWizard: React.FC<Props> = ({ onFinish, onCancel }) => {
     }));
   };
 
+  const validateStep2 = (): boolean => {
+    if (!formData.name || !formData.name.trim()) {
+      message.error('Please enter an internal configuration identifier.');
+      return false;
+    }
+    if (!formData.bucket_or_container || !formData.bucket_or_container.trim()) {
+      message.error('Please enter a target bucket or container name.');
+      return false;
+    }
+
+    if (formData.provider === 's3') {
+      if (!formData.endpoint && (!formData.region_or_project || !formData.region_or_project.trim())) {
+        message.error('AWS Region is required when using standard AWS S3.');
+        return false;
+      }
+      if (formData.auth_type === 'access_keys') {
+        if (!formData.credentials?.access_key_id?.trim()) {
+          message.error('AWS Access Key ID is required.');
+          return false;
+        }
+        if (!formData.credentials?.secret_access_key?.trim()) {
+          message.error('AWS Secret Access Key is required.');
+          return false;
+        }
+      }
+    } else if (formData.provider === 'azure') {
+      if (formData.auth_type === 'connection_string') {
+        if (!formData.credentials?.connection_string?.trim()) {
+          message.error('Azure Connection String is required.');
+          return false;
+        }
+      } else if (formData.auth_type === 'account_key') {
+        if (!formData.region_or_project?.trim()) {
+          message.error('Azure Storage Account Name is required.');
+          return false;
+        }
+        if (!formData.credentials?.account_key?.trim()) {
+          message.error('Azure Storage Account Key is required.');
+          return false;
+        }
+      }
+    } else if (formData.provider === 'gcs') {
+      if (formData.auth_type === 'service_account_json') {
+        if (!formData.credentials?.service_account_json?.trim()) {
+          message.error('Google Service Account JSON key is required.');
+          return false;
+        }
+      } else if (formData.auth_type === 'application_default_credentials') {
+        if (!formData.region_or_project?.trim()) {
+          message.error('Google Cloud Project ID is required.');
+          return false;
+        }
+      }
+    }
+
+    return true;
+  };
+
   const next = () => {
     if (currentStep === 1) {
-      if (!formData.name || !formData.bucket_or_container) {
-        message.error('Please enter an identifier and bucket/container name before proceeding.');
+      if (!validateStep2()) {
         return;
       }
     }
@@ -129,10 +196,15 @@ export const SetupWizard: React.FC<Props> = ({ onFinish, onCancel }) => {
   ];
 
   return (
-    <Card style={{ borderRadius: 8 }}>
-      <Steps current={currentStep} items={stepItems} style={{ marginBottom: 32 }} />
+    <Card style={{ borderRadius: 10, boxShadow: '0 2px 8px rgba(0, 0, 0, 0.04)' }}>
+      <Steps
+        current={currentStep}
+        items={stepItems}
+        responsive
+        style={{ marginBottom: 32, padding: '8px 16px' }}
+      />
 
-      <div style={{ minHeight: 400, marginBottom: 24 }}>
+      <div style={{ minHeight: 420, marginBottom: 24 }}>
         {currentStep === 0 && (
           <Step1ProviderSelect
             selectedProvider={formData.provider}
@@ -153,6 +225,7 @@ export const SetupWizard: React.FC<Props> = ({ onFinish, onCancel }) => {
             formData={formData}
             testResult={testResult}
             onTestComplete={setTestResult}
+            onBackToConfig={() => setCurrentStep(1)}
           />
         )}
 
@@ -174,12 +247,16 @@ export const SetupWizard: React.FC<Props> = ({ onFinish, onCancel }) => {
         )}
       </div>
 
-      <div style={{ display: 'flex', justifyContent: 'space-between', borderTop: '1px solid #f0f0f0', paddingTop: 16 }}>
-        <div>
-          {onCancel && (
-            <Button onClick={onCancel}>Cancel</Button>
-          )}
-        </div>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          borderTop: '1px solid #f1f5f9',
+          paddingTop: 16,
+        }}
+      >
+        <div>{onCancel && <Button onClick={onCancel}>Cancel</Button>}</div>
         <div>
           {currentStep > 0 && (
             <Button style={{ marginRight: 8 }} onClick={prev}>

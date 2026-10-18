@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Tabs, Button, message, Space, Typography, Spin, ConfigProvider } from 'antd';
 import {
-  CloudServerOutlined,
   DashboardOutlined,
   UnorderedListOutlined,
   PlusOutlined,
@@ -107,12 +106,22 @@ export const CloudStoragePage: React.FC = () => {
         }}
       >
         {/* HEADER */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            flexWrap: 'wrap',
+            gap: 16,
+            marginBottom: 20,
+          }}
+        >
           <Space align="center" size={14}>
             <div
               style={{
                 width: 44,
                 height: 44,
+                minWidth: 44,
                 borderRadius: 10,
                 background: '#f3e8ff',
                 display: 'flex',
@@ -135,7 +144,7 @@ export const CloudStoragePage: React.FC = () => {
             </div>
           </Space>
 
-          <Space>
+          <Space wrap>
             <Button icon={<SyncOutlined />} onClick={loadAllData} loading={loading}>
               Refresh
             </Button>

@@ -278,11 +278,11 @@ class StudioCloudStorageApiController extends AbstractController
             $config = new StorageConfiguration();
             $config->setName($payload['name'] ?? 'draft-test');
             $config->setProvider($payload['provider'] ?? StorageConfiguration::PROVIDER_S3);
-            $config->setBucketOrContainer($payload['bucket_or_container'] ?? '');
-            $config->setRegionOrProject($payload['region_or_project'] ?? null);
+            $config->setBucketOrContainer($payload['bucket_or_container'] ?? $payload['bucketOrContainer'] ?? '');
+            $config->setRegionOrProject($payload['region_or_project'] ?? $payload['regionOrProject'] ?? null);
             $config->setEndpoint($payload['endpoint'] ?? null);
-            $config->setPathPrefix($payload['path_prefix'] ?? null);
-            $config->setAuthType($payload['auth_type'] ?? StorageConfiguration::AUTH_S3_ACCESS_KEYS);
+            $config->setPathPrefix($payload['path_prefix'] ?? $payload['pathPrefix'] ?? null);
+            $config->setAuthType($payload['auth_type'] ?? $payload['authType'] ?? StorageConfiguration::AUTH_S3_ACCESS_KEYS);
             $config->setSettings($payload['settings'] ?? []);
 
             if (isset($payload['credentials']) && \is_array($payload['credentials'])) {

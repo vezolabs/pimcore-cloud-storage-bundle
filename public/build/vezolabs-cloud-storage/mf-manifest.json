@@ -97,8 +97,8 @@
         "js": {
           "sync": [
             "static/js/async/647.9f08e937.js",
-            "static/js/async/245.5b81f4c1.js",
-            "static/js/async/__federation_expose_plugins.8d2045a2.js"
+            "static/js/async/144.6867e381.js",
+            "static/js/async/__federation_expose_plugins.a2ac3855.js"
           ],
           "async": [
             "static/js/async/610.4ff8adcc.js",

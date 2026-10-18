@@ -1,12 +1,12 @@
 {
   "allFiles": [
-    "/bundles/vezolabscloudstorage/build/vezolabs-cloud-storage/static/js/main.e4c483d4.js",
+    "/bundles/vezolabscloudstorage/build/vezolabs-cloud-storage/static/js/main.159a6ded.js",
     "/bundles/vezolabscloudstorage/build/vezolabs-cloud-storage/static/js/remoteEntry.js",
     "/bundles/vezolabscloudstorage/build/vezolabs-cloud-storage/static/js/async/610.4ff8adcc.js",
-    "/bundles/vezolabscloudstorage/build/vezolabs-cloud-storage/static/js/async/__federation_expose_plugins.8d2045a2.js",
+    "/bundles/vezolabscloudstorage/build/vezolabs-cloud-storage/static/js/async/__federation_expose_plugins.a2ac3855.js",
     "/bundles/vezolabscloudstorage/build/vezolabs-cloud-storage/static/js/async/647.9f08e937.js",
     "/bundles/vezolabscloudstorage/build/vezolabs-cloud-storage/static/js/async/547.3aabaa1c.js",
-    "/bundles/vezolabscloudstorage/build/vezolabs-cloud-storage/static/js/async/245.5b81f4c1.js",
+    "/bundles/vezolabscloudstorage/build/vezolabs-cloud-storage/static/js/async/144.6867e381.js",
     "/bundles/vezolabscloudstorage/build/vezolabs-cloud-storage/static/js/526.e6d2c2b7.js",
     "/bundles/vezolabscloudstorage/build/vezolabs-cloud-storage/static/js/async/481.aba3ac7b.js",
     "/bundles/vezolabscloudstorage/build/vezolabs-cloud-storage/mf-stats.json",
@@ -21,7 +21,7 @@
       "initial": {
         "js": [
           "/bundles/vezolabscloudstorage/build/vezolabs-cloud-storage/static/js/526.e6d2c2b7.js",
-          "/bundles/vezolabscloudstorage/build/vezolabs-cloud-storage/static/js/main.e4c483d4.js"
+          "/bundles/vezolabscloudstorage/build/vezolabs-cloud-storage/static/js/main.159a6ded.js"
         ]
       },
       "async": {
@@ -42,10 +42,10 @@
       "async": {
         "js": [
           "/bundles/vezolabscloudstorage/build/vezolabs-cloud-storage/static/js/async/481.aba3ac7b.js",
-          "/bundles/vezolabscloudstorage/build/vezolabs-cloud-storage/static/js/async/245.5b81f4c1.js",
+          "/bundles/vezolabscloudstorage/build/vezolabs-cloud-storage/static/js/async/144.6867e381.js",
           "/bundles/vezolabscloudstorage/build/vezolabs-cloud-storage/static/js/async/547.3aabaa1c.js",
           "/bundles/vezolabscloudstorage/build/vezolabs-cloud-storage/static/js/async/647.9f08e937.js",
-          "/bundles/vezolabscloudstorage/build/vezolabs-cloud-storage/static/js/async/__federation_expose_plugins.8d2045a2.js",
+          "/bundles/vezolabscloudstorage/build/vezolabs-cloud-storage/static/js/async/__federation_expose_plugins.a2ac3855.js",
           "/bundles/vezolabscloudstorage/build/vezolabs-cloud-storage/static/js/async/610.4ff8adcc.js"
         ]
       }

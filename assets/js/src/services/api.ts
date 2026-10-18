@@ -18,6 +18,7 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
   };
 
   const response = await fetch(`${BASE_URL}${endpoint}`, {
+    credentials: 'same-origin',
     ...options,
     headers,
   });
@@ -25,7 +26,13 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
   const data = await response.json().catch(() => ({}));
 
   if (!response.ok) {
-    const errorMsg = data.error || data.message || `Request failed with status ${response.status}`;
+    let errorMsg = data.error || data.message || `Request failed with status ${response.status}`;
+    if (data.details && typeof data.details === 'object') {
+      const detailsArr = Object.entries(data.details).map(([k, v]) => `${k}: ${v}`);
+      if (detailsArr.length > 0) {
+        errorMsg += ` (${detailsArr.join(', ')})`;
+      }
+    }
     const error = new Error(errorMsg) as Error & { details?: any };
     error.details = data.details;
     throw error;
