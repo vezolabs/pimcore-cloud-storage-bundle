@@ -32,14 +32,14 @@ class StudioCloudStorageApiControllerTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->configRepoMock = $this->createMock(StorageConfigurationRepository::class);
-        $this->jobRepoMock = $this->createMock(MigrationJobRepository::class);
-        $this->auditRepoMock = $this->createMock(ConfigAuditLogRepository::class);
-        $this->providerRegistryMock = $this->createMock(StorageProviderRegistry::class);
-        $this->testerMock = $this->createMock(ConnectionTester::class);
-        $this->storageManagerMock = $this->createMock(StorageManagerService::class);
-        $this->orchestratorMock = $this->createMock(MigrationOrchestrator::class);
-        $this->diagnosticsMock = $this->createMock(DiagnosticsService::class);
+        $this->configRepoMock = $this->createStub(StorageConfigurationRepository::class);
+        $this->jobRepoMock = $this->createStub(MigrationJobRepository::class);
+        $this->auditRepoMock = $this->createStub(ConfigAuditLogRepository::class);
+        $this->providerRegistryMock = $this->createStub(StorageProviderRegistry::class);
+        $this->testerMock = $this->createStub(ConnectionTester::class);
+        $this->storageManagerMock = $this->createStub(StorageManagerService::class);
+        $this->orchestratorMock = $this->createStub(MigrationOrchestrator::class);
+        $this->diagnosticsMock = $this->createStub(DiagnosticsService::class);
     }
 
     private function createController(): StudioCloudStorageApiController

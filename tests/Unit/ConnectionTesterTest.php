@@ -34,7 +34,7 @@ class ConnectionTesterTest extends TestCase
         $providerMock->method('getKey')->willReturn(StorageConfiguration::PROVIDER_S3);
         $registry->registerProvider($providerMock);
 
-        $repoMock = $this->createMock(StorageConfigurationRepository::class);
+        $repoMock = $this->createStub(StorageConfigurationRepository::class);
 
         $tester = new ConnectionTester($registry, $repoMock);
         $result = $tester->testConfiguration($config);
@@ -58,7 +58,7 @@ class ConnectionTesterTest extends TestCase
         $registry = new StorageProviderRegistry();
         $registry->registerProvider($providerMock);
 
-        $repoMock = $this->createMock(StorageConfigurationRepository::class);
+        $repoMock = $this->createStub(StorageConfigurationRepository::class);
 
         $tester = new ConnectionTester($registry, $repoMock);
         $result = $tester->testConfiguration($config);

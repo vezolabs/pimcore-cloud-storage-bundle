@@ -23,10 +23,10 @@ class DynamicCloudStorageAdapterTest extends TestCase
             ->with('sample.jpg')
             ->willReturn(true);
 
-        $storageManagerMock = $this->createMock(StorageManagerService::class);
+        $storageManagerMock = $this->createStub(StorageManagerService::class);
         $storageManagerMock->method('getActiveConfiguration')->willReturn(null);
 
-        $factoryMock = $this->createMock(CloudStorageAdapterFactory::class);
+        $factoryMock = $this->createStub(CloudStorageAdapterFactory::class);
 
         $dynamicAdapter = new DynamicCloudStorageAdapter(
             localFallback: $localMock,
@@ -42,7 +42,7 @@ class DynamicCloudStorageAdapterTest extends TestCase
 
     public function testDelegatesToCloudAdapterWhenActive(): void
     {
-        $localMock = $this->createMock(FilesystemAdapter::class);
+        $localMock = $this->createStub(FilesystemAdapter::class);
         $cloudMock = $this->createMock(FilesystemAdapter::class);
 
         $cloudMock->expects($this->once())
@@ -54,7 +54,7 @@ class DynamicCloudStorageAdapterTest extends TestCase
         $activeConfig->setProvider(StorageConfiguration::PROVIDER_S3);
         $activeConfig->setBucketOrContainer('my-bucket');
 
-        $storageManagerMock = $this->createMock(StorageManagerService::class);
+        $storageManagerMock = $this->createStub(StorageManagerService::class);
         $storageManagerMock->method('getActiveConfiguration')->willReturn($activeConfig);
 
         $factoryMock = $this->createMock(CloudStorageAdapterFactory::class);
@@ -77,14 +77,14 @@ class DynamicCloudStorageAdapterTest extends TestCase
 
     public function testResetAdapterCache(): void
     {
-        $localMock = $this->createMock(FilesystemAdapter::class);
-        $cloudMock1 = $this->createMock(FilesystemAdapter::class);
-        $cloudMock2 = $this->createMock(FilesystemAdapter::class);
+        $localMock = $this->createStub(FilesystemAdapter::class);
+        $cloudMock1 = $this->createStub(FilesystemAdapter::class);
+        $cloudMock2 = $this->createStub(FilesystemAdapter::class);
 
         $config1 = (new StorageConfiguration())->setName('s3-1')->setProvider(StorageConfiguration::PROVIDER_S3);
         $config2 = (new StorageConfiguration())->setName('s3-2')->setProvider(StorageConfiguration::PROVIDER_S3);
 
-        $storageManagerMock = $this->createMock(StorageManagerService::class);
+        $storageManagerMock = $this->createStub(StorageManagerService::class);
         $storageManagerMock->method('getActiveConfiguration')
             ->willReturnOnConsecutiveCalls($config1, $config2);
 
