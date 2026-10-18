@@ -1,0 +1,2 @@
+vezolabs_cloud_storage:
+    resource: '@VezolabsCloudStorageBundle/config/routes.yaml'

@@ -1,0 +1,86 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: true
+
+    Vezolabs\CloudStorageBundle\:
+        resource: '../src/'
+        exclude:
+            - '../src/Entity/'
+            - '../src/DependencyInjection/'
+            - '../src/VezolabsCloudStorageBundle.php'
+            - '../src/Flysystem/DynamicCloudStorageAdapter.php'
+
+    # Security & Encryptor
+    Vezolabs\CloudStorageBundle\Security\CredentialEncryptor:
+        public: true
+        arguments:
+            $secretKey: '%env(default:kernel.secret:PIMCORE_ENCRYPTION_SECRET)%'
+
+    # Providers
+    Vezolabs\CloudStorageBundle\Provider\LocalStorageProvider:
+        public: true
+        arguments:
+            $projectDir: '%kernel.project_dir%'
+
+    Vezolabs\CloudStorageBundle\Provider\S3StorageProvider:
+        public: true
+
+    Vezolabs\CloudStorageBundle\Provider\AzureBlobStorageProvider:
+        public: true
+
+    Vezolabs\CloudStorageBundle\Provider\GoogleCloudStorageProvider:
+        public: true
+
+    # Provider Registry
+    Vezolabs\CloudStorageBundle\Provider\StorageProviderRegistry:
+        public: true
+        arguments:
+            $providers:
+                - '@Vezolabs\CloudStorageBundle\Provider\S3StorageProvider'
+                - '@Vezolabs\CloudStorageBundle\Provider\AzureBlobStorageProvider'
+                - '@Vezolabs\CloudStorageBundle\Provider\GoogleCloudStorageProvider'
+                - '@Vezolabs\CloudStorageBundle\Provider\LocalStorageProvider'
+
+    # Services
+    Vezolabs\CloudStorageBundle\Repository\StorageConfigurationRepository:
+        public: true
+
+    Vezolabs\CloudStorageBundle\Repository\ConfigAuditLogRepository:
+        public: true
+
+    Vezolabs\CloudStorageBundle\Repository\MigrationJobRepository:
+        public: true
+
+    Vezolabs\CloudStorageBundle\Service\StorageManagerService:
+        public: true
+
+    Vezolabs\CloudStorageBundle\Service\ConnectionTester:
+        public: true
+
+    Vezolabs\CloudStorageBundle\Service\MigrationOrchestrator:
+        public: true
+
+    Vezolabs\CloudStorageBundle\Service\DiagnosticsService:
+        public: true
+
+    Vezolabs\CloudStorageBundle\Flysystem\CloudStorageAdapterFactory:
+        public: true
+
+    # Webpack Entrypoint for Studio UI
+    Vezolabs\CloudStorageBundle\Webpack\WebpackEntryPointProvider:
+        public: true
+
+    # Controllers
+    Vezolabs\CloudStorageBundle\Controller\Api\StudioCloudStorageApiController:
+        tags: ['controller.service_arguments']
+        public: true
+
+    Vezolabs\CloudStorageBundle\Controller\AssetStreamController:
+        tags: ['controller.service_arguments']
+        public: true
+
+    # Installer
+    Vezolabs\CloudStorageBundle\Installer\CloudStorageInstaller:
+        public: true

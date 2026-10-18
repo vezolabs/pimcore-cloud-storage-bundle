@@ -1,0 +1,46 @@
+{
+  "name": "vezolabs/pimcore-cloud-storage-bundle",
+  "type": "pimcore-bundle",
+  "description": "Production-Ready Cloud Storage Manager for Pimcore 12 Studio supporting Amazon S3, Azure Blob, and Google Cloud Storage",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "VezoLabs",
+      "homepage": "https://github.com/vezolabs"
+    }
+  ],
+  "require": {
+    "php": "~8.2.0 || ~8.3.0 || ~8.4.0 || ~8.5.0",
+    "pimcore/pimcore": "^2025.0 || ^2026.0 || *",
+    "pimcore/studio-backend-bundle": "*",
+    "pimcore/studio-ui-bundle": "*",
+    "league/flysystem": "^3.0",
+    "league/flysystem-aws-s3-v3": "^3.0",
+    "league/flysystem-azure-blob-storage": "^3.0",
+    "league/flysystem-google-cloud-storage": "^3.0",
+    "aws/aws-sdk-php": "^3.0",
+    "microsoft/azure-storage-blob": "^1.5",
+    "google/cloud-storage": "^1.40 || ^2.0",
+    "symfony/security-bundle": "^6.4 || ^7.0 || ^8.0"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^10.0 || ^11.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Vezolabs\\CloudStorageBundle\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Vezolabs\\CloudStorageBundle\\Tests\\": "tests/"
+    }
+  },
+  "extra": {
+    "pimcore": {
+      "bundles": [
+        "Vezolabs\\CloudStorageBundle\\VezolabsCloudStorageBundle"
+      ]
+    }
+  }
+}

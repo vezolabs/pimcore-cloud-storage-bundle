@@ -1,0 +1,10 @@
+{
+  "entrypoints": {
+    "exposeRemote": {
+      "js": [
+        "/bundles/vezolabscloudstorage/build/vezolabs-cloud-storage/exposeRemote.js"
+      ],
+      "css": []
+    }
+  }
+}

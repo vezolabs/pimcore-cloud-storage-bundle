@@ -1,0 +1,117 @@
+{
+  "id": "vezolabs_cloud_storage_bundle",
+  "name": "vezolabs_cloud_storage_bundle",
+  "metaData": {
+    "name": "vezolabs_cloud_storage_bundle",
+    "type": "app",
+    "buildInfo": {
+      "buildVersion": "1.0.0",
+      "buildName": "@vezolabs/pimcore-cloud-storage-bundle"
+    },
+    "remoteEntry": {
+      "name": "static/js/remoteEntry.js",
+      "path": "",
+      "type": "global"
+    },
+    "types": {
+      "path": "",
+      "name": "",
+      "zip": "static/js/@mf-types.zip",
+      "api": "static/js/@mf-types.d.ts"
+    },
+    "globalName": "vezolabs_cloud_storage_bundle",
+    "pluginVersion": "0.8.12",
+    "prefetchInterface": false,
+    "publicPath": "/bundles/vezolabscloudstorage/build/vezolabs-cloud-storage/"
+  },
+  "shared": [
+    {
+      "id": "vezolabs_cloud_storage_bundle:antd",
+      "name": "antd",
+      "version": "5.29.3",
+      "singleton": true,
+      "requiredVersion": "^5.29.3",
+      "assets": {
+        "js": {
+          "async": [
+            "static/js/async/610.4ff8adcc.js",
+            "static/js/async/481.aba3ac7b.js"
+          ],
+          "sync": [
+            "static/js/async/547.3aabaa1c.js"
+          ]
+        },
+        "css": {
+          "async": [],
+          "sync": []
+        }
+      }
+    },
+    {
+      "id": "vezolabs_cloud_storage_bundle:react-dom",
+      "name": "react-dom",
+      "version": "18.3.1",
+      "singleton": true,
+      "requiredVersion": "^18.3.1",
+      "assets": {
+        "js": {
+          "async": [
+            "static/js/async/610.4ff8adcc.js"
+          ],
+          "sync": [
+            "static/js/async/481.aba3ac7b.js"
+          ]
+        },
+        "css": {
+          "async": [],
+          "sync": []
+        }
+      }
+    },
+    {
+      "id": "vezolabs_cloud_storage_bundle:react",
+      "name": "react",
+      "version": "18.3.1",
+      "singleton": true,
+      "requiredVersion": "^18.3.1",
+      "assets": {
+        "js": {
+          "async": [],
+          "sync": [
+            "static/js/async/610.4ff8adcc.js"
+          ]
+        },
+        "css": {
+          "async": [],
+          "sync": []
+        }
+      }
+    }
+  ],
+  "remotes": [],
+  "exposes": [
+    {
+      "id": "vezolabs_cloud_storage_bundle:plugins",
+      "name": "plugins",
+      "assets": {
+        "js": {
+          "sync": [
+            "static/js/async/647.9f08e937.js",
+            "static/js/async/734.660a95ac.js",
+            "static/js/async/__federation_expose_plugins.0615f889.js"
+          ],
+          "async": [
+            "static/js/async/610.4ff8adcc.js",
+            "static/js/async/547.3aabaa1c.js",
+            "static/js/async/481.aba3ac7b.js"
+          ]
+        },
+        "css": {
+          "sync": [],
+          "async": []
+        }
+      },
+      "path": "./plugins"
+    }
+  ]
+}
