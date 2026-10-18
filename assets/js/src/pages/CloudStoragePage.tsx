@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Layout, Tabs, Button, message, Space, Typography, Spin, Alert } from 'antd';
+import { Tabs, Button, message, Space, Typography, Spin, ConfigProvider } from 'antd';
 import {
   CloudServerOutlined,
   DashboardOutlined,
@@ -8,6 +8,7 @@ import {
   SyncOutlined,
   SlidersOutlined,
   SwapOutlined,
+  CloudOutlined,
 } from '@ant-design/icons';
 import { StorageOverview, StorageConfiguration } from '../types';
 import { CloudStorageApi } from '../services/api';
@@ -18,8 +19,15 @@ import { ConfigurationEditorModal } from '../components/Configurations/Configura
 import { MigrationWizardModal } from '../components/Migration/MigrationWizardModal';
 import { DiagnosticsDrawer } from '../components/Diagnostics/DiagnosticsDrawer';
 
-const { Content } = Layout;
 const { Title, Text } = Typography;
+
+const PIMCORE_THEME = {
+  token: {
+    colorPrimary: '#722ed1',
+    borderRadius: 6,
+    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+  },
+};
 
 export const CloudStoragePage: React.FC = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
@@ -80,132 +88,158 @@ export const CloudStoragePage: React.FC = () => {
 
   if (loading && !overview) {
     return (
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 400 }}>
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%', minHeight: 400 }}>
         <Spin size="large" tip="Loading Cloud Storage Configuration..." />
       </div>
     );
   }
 
   return (
-    <Content style={{ padding: '24px 32px', maxWidth: 1200, margin: '0 auto' }}>
-      {/* HEADER */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-        <div>
-          <Space align="center">
-            <CloudServerOutlined style={{ fontSize: 26, color: '#1677ff' }} />
-            <Title level={3} style={{ margin: 0 }}>
-              Cloud Storage Manager
-            </Title>
+    <ConfigProvider theme={PIMCORE_THEME}>
+      <div
+        style={{
+          height: '100%',
+          width: '100%',
+          overflowY: 'auto',
+          background: '#f8fafc',
+          padding: '24px',
+          boxSizing: 'border-box',
+        }}
+      >
+        {/* HEADER */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+          <Space align="center" size={14}>
+            <div
+              style={{
+                width: 44,
+                height: 44,
+                borderRadius: 10,
+                background: '#f3e8ff',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: '#722ed1',
+                fontSize: 24,
+                boxShadow: '0 2px 6px rgba(114, 46, 209, 0.15)',
+              }}
+            >
+              <CloudOutlined />
+            </div>
+            <div>
+              <Title level={3} style={{ margin: 0, color: '#1e293b' }}>
+                Cloud Storage Manager
+              </Title>
+              <Text type="secondary" style={{ fontSize: 13 }}>
+                Configure and manage Amazon S3, Azure Blob, and Google Cloud Storage natively for Pimcore 12 Studio
+              </Text>
+            </div>
           </Space>
-          <div style={{ marginTop: 4 }}>
-            <Text type="secondary">
-              Configure and manage Amazon S3, Azure Blob, and Google Cloud Storage natively for Pimcore 12 Studio.
-            </Text>
-          </div>
+
+          <Space>
+            <Button icon={<SyncOutlined />} onClick={loadAllData} loading={loading}>
+              Refresh
+            </Button>
+            <Button icon={<SlidersOutlined />} onClick={() => setDiagnosticsOpen(true)}>
+              Diagnostics
+            </Button>
+            <Button icon={<SwapOutlined />} onClick={() => handleLaunchMigration()}>
+              Migration Assistant
+            </Button>
+            <Button type="primary" icon={<PlusOutlined />} onClick={() => setActiveTab('wizard')}>
+              New Storage Setup
+            </Button>
+          </Space>
         </div>
 
-        <Space>
-          <Button icon={<SyncOutlined />} onClick={loadAllData}>
-            Refresh
-          </Button>
-          <Button icon={<SlidersOutlined />} onClick={() => setDiagnosticsOpen(true)}>
-            Diagnostics
-          </Button>
-          <Button icon={<SwapOutlined />} onClick={() => handleLaunchMigration()}>
-            Migration Assistant
-          </Button>
-          <Button type="primary" icon={<PlusOutlined />} onClick={() => setActiveTab('wizard')}>
-            New Storage Setup
-          </Button>
-        </Space>
+        {/* TABS */}
+        <Tabs
+          activeKey={activeTab}
+          onChange={setActiveTab}
+          size="middle"
+          style={{ background: 'transparent' }}
+          items={[
+            {
+              key: 'dashboard',
+              label: (
+                <Space size={6}>
+                  <DashboardOutlined />
+                  <span>Dashboard</span>
+                </Space>
+              ),
+              children: overview ? (
+                <StorageDashboard
+                  overview={overview}
+                  onNavigateToWizard={() => setActiveTab('wizard')}
+                  onNavigateToConfigs={() => setActiveTab('configurations')}
+                  onNavigateToMigration={() => handleLaunchMigration()}
+                  onOpenDiagnostics={() => setDiagnosticsOpen(true)}
+                  onTestActive={handleTestActive}
+                  testingActive={testingActive}
+                />
+              ) : null,
+            },
+            {
+              key: 'configurations',
+              label: (
+                <Space size={6}>
+                  <UnorderedListOutlined />
+                  <span>Storage Profiles ({configurations.length})</span>
+                </Space>
+              ),
+              children: (
+                <ConfigurationList
+                  configurations={configurations}
+                  onRefresh={loadAllData}
+                  onEdit={(c) => setEditingConfig(c)}
+                  onMigrateTo={(tId) => handleLaunchMigration(tId)}
+                />
+              ),
+            },
+            {
+              key: 'wizard',
+              label: (
+                <Space size={6}>
+                  <PlusOutlined />
+                  <span>Guided Setup Wizard</span>
+                </Space>
+              ),
+              children: (
+                <SetupWizard
+                  onFinish={() => {
+                    loadAllData();
+                    setActiveTab('dashboard');
+                  }}
+                  onCancel={() => setActiveTab('dashboard')}
+                />
+              ),
+            },
+          ]}
+        />
+
+        {/* MODALS */}
+        <ConfigurationEditorModal
+          open={editingConfig !== null}
+          config={editingConfig}
+          onClose={() => setEditingConfig(null)}
+          onSaved={loadAllData}
+        />
+
+        <MigrationWizardModal
+          open={migrationModalOpen}
+          configurations={configurations}
+          defaultTargetId={migrationTargetId}
+          onClose={() => {
+            setMigrationModalOpen(false);
+            setMigrationTargetId(null);
+          }}
+          onMigrationComplete={loadAllData}
+        />
+
+        <DiagnosticsDrawer
+          open={diagnosticsOpen}
+          onClose={() => setDiagnosticsOpen(false)}
+        />
       </div>
-
-      {/* TABS */}
-      <Tabs
-        activeKey={activeTab}
-        onChange={setActiveTab}
-        items={[
-          {
-            key: 'dashboard',
-            label: (
-              <span>
-                <DashboardOutlined />
-                Dashboard
-              </span>
-            ),
-            children: overview ? (
-              <StorageDashboard
-                overview={overview}
-                onNavigateToWizard={() => setActiveTab('wizard')}
-                onNavigateToConfigs={() => setActiveTab('configurations')}
-                onNavigateToMigration={() => handleLaunchMigration()}
-                onOpenDiagnostics={() => setDiagnosticsOpen(true)}
-                onTestActive={handleTestActive}
-                testingActive={testingActive}
-              />
-            ) : null,
-          },
-          {
-            key: 'configurations',
-            label: (
-              <span>
-                <UnorderedListOutlined />
-                Storage Profiles ({configurations.length})
-              </span>
-            ),
-            children: (
-              <ConfigurationList
-                configurations={configurations}
-                onRefresh={loadAllData}
-                onEdit={(c) => setEditingConfig(c)}
-                onMigrateTo={(tId) => handleLaunchMigration(tId)}
-              />
-            ),
-          },
-          {
-            key: 'wizard',
-            label: (
-              <span>
-                <PlusOutlined />
-                Guided Setup Wizard
-              </span>
-            ),
-            children: (
-              <SetupWizard
-                onFinish={() => {
-                  loadAllData();
-                  setActiveTab('dashboard');
-                }}
-                onCancel={() => setActiveTab('dashboard')}
-              />
-            ),
-          },
-        ]}
-      />
-
-      {/* MODALS */}
-      <ConfigurationEditorModal
-        open={editingConfig !== null}
-        config={editingConfig}
-        onClose={() => setEditingConfig(null)}
-        onSaved={loadAllData}
-      />
-
-      <MigrationWizardModal
-        open={migrationModalOpen}
-        configurations={configurations}
-        defaultTargetId={migrationTargetId}
-        onClose={() => {
-          setMigrationModalOpen(false);
-          setMigrationTargetId(null);
-        }}
-        onMigrationComplete={loadAllData}
-      />
-
-      <DiagnosticsDrawer
-        open={diagnosticsOpen}
-        onClose={() => setDiagnosticsOpen(false)}
-      />
-    </Content>
+    </ConfigProvider>
   );
 };

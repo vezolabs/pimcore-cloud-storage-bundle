@@ -46,41 +46,64 @@ function registerCloudStorage(container: any) {
     ]);
 
     if (mainNavRegistry && typeof mainNavRegistry.registerMainNavItem === 'function') {
-      // Primary: Under System menu
+      // Primary entry under System
       mainNavRegistry.registerMainNavItem({
         path: 'System/Cloud Storage',
         label: 'Cloud Storage',
-        order: 1060,
+        order: 1050,
+        icon: 'upload-cloud',
         widgetConfig: {
           name: 'cloud-storage',
           id: 'cloud-storage',
           component: 'cloud-storage',
           config: {
-            title: 'Cloud Storage Manager',
+            title: 'Cloud Storage',
             translationKey: 'Cloud Storage',
             icon: {
               type: 'name',
-              value: 'cloud',
+              value: 'upload-cloud',
             },
           },
         },
       });
 
-      // Secondary shortcut: Under Asset Management
+      // Entry under Settings
       mainNavRegistry.registerMainNavItem({
-        path: 'Asset Management/Cloud Storage',
+        path: 'Settings/Cloud Storage',
         label: 'Cloud Storage',
         order: 1050,
+        icon: 'upload-cloud',
         widgetConfig: {
           name: 'cloud-storage',
           id: 'cloud-storage',
           component: 'cloud-storage',
           config: {
-            title: 'Cloud Storage Manager',
+            title: 'Cloud Storage',
             translationKey: 'Cloud Storage',
             icon: {
               type: 'name',
-              value: 'cloud',
+              value: 'upload-cloud',
+            },
+          },
+        },
+      });
+
+      // Secondary: Under AssetManagement
+      mainNavRegistry.registerMainNavItem({
+        path: 'AssetManagement/Cloud Storage',
+        label: 'Cloud Storage',
+        order: 1050,
+        icon: 'upload-cloud',
+        widgetConfig: {
+          name: 'cloud-storage',
+          id: 'cloud-storage',
+          component: 'cloud-storage',
+          config: {
+            title: 'Cloud Storage',
+            translationKey: 'Cloud Storage',
+            icon: {
+              type: 'name',
+              value: 'upload-cloud',
             },
           },
         },
