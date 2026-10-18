@@ -139,13 +139,13 @@ class StudioCloudStorageApiController extends AbstractController
         try {
             $config = new StorageConfiguration();
             $config->setName($payload['name'] ?? '');
-            $config->setDisplayName($payload['display_name'] ?? $config->getName());
+            $config->setDisplayName($payload['display_name'] ?? $payload['displayName'] ?? $config->getName());
             $config->setProvider($payload['provider'] ?? StorageConfiguration::PROVIDER_S3);
-            $config->setBucketOrContainer($payload['bucket_or_container'] ?? '');
-            $config->setRegionOrProject($payload['region_or_project'] ?? null);
+            $config->setBucketOrContainer($payload['bucket_or_container'] ?? $payload['bucketOrContainer'] ?? '');
+            $config->setRegionOrProject($payload['region_or_project'] ?? $payload['regionOrProject'] ?? null);
             $config->setEndpoint($payload['endpoint'] ?? null);
-            $config->setPathPrefix($payload['path_prefix'] ?? null);
-            $config->setAuthType($payload['auth_type'] ?? StorageConfiguration::AUTH_S3_ACCESS_KEYS);
+            $config->setPathPrefix($payload['path_prefix'] ?? $payload['pathPrefix'] ?? null);
+            $config->setAuthType($payload['auth_type'] ?? $payload['authType'] ?? StorageConfiguration::AUTH_S3_ACCESS_KEYS);
             $config->setSettings($payload['settings'] ?? []);
 
             if (isset($payload['credentials']) && \is_array($payload['credentials'])) {
@@ -193,23 +193,26 @@ class StudioCloudStorageApiController extends AbstractController
         }
 
         try {
-            if (isset($payload['display_name'])) {
-                $config->setDisplayName($payload['display_name']);
+            $displayName = $payload['display_name'] ?? $payload['displayName'] ?? null;
+            if ($displayName !== null) {
+                $config->setDisplayName($displayName);
             }
-            if (isset($payload['bucket_or_container'])) {
-                $config->setBucketOrContainer($payload['bucket_or_container']);
+            $bucketOrContainer = $payload['bucket_or_container'] ?? $payload['bucketOrContainer'] ?? null;
+            if ($bucketOrContainer !== null) {
+                $config->setBucketOrContainer($bucketOrContainer);
             }
-            if (array_key_exists('region_or_project', $payload)) {
-                $config->setRegionOrProject($payload['region_or_project']);
+            if (array_key_exists('region_or_project', $payload) || array_key_exists('regionOrProject', $payload)) {
+                $config->setRegionOrProject($payload['region_or_project'] ?? $payload['regionOrProject'] ?? null);
             }
             if (array_key_exists('endpoint', $payload)) {
                 $config->setEndpoint($payload['endpoint']);
             }
-            if (array_key_exists('path_prefix', $payload)) {
-                $config->setPathPrefix($payload['path_prefix']);
+            if (array_key_exists('path_prefix', $payload) || array_key_exists('pathPrefix', $payload)) {
+                $config->setPathPrefix($payload['path_prefix'] ?? $payload['pathPrefix'] ?? null);
             }
-            if (isset($payload['auth_type'])) {
-                $config->setAuthType($payload['auth_type']);
+            $authType = $payload['auth_type'] ?? $payload['authType'] ?? null;
+            if ($authType !== null) {
+                $config->setAuthType($authType);
             }
             if (isset($payload['settings']) && \is_array($payload['settings'])) {
                 $config->setSettings($payload['settings']);
