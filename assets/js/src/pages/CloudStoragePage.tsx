@@ -127,7 +127,7 @@ export const CloudStoragePage: React.FC = () => {
             </div>
             <div>
               <Title level={3} style={{ margin: 0, color: '#1e293b' }}>
-                Cloud Storage Manager
+                Vezo Labs : Cloud Storage Manager
               </Title>
               <Text type="secondary" style={{ fontSize: 13 }}>
                 Configure and manage Amazon S3, Azure Blob, and Google Cloud Storage natively for Pimcore 12 Studio
@@ -239,6 +239,18 @@ export const CloudStoragePage: React.FC = () => {
           open={diagnosticsOpen}
           onClose={() => setDiagnosticsOpen(false)}
         />
+
+        {/* Copyright Footer */}
+        <div style={{ marginTop: 32, padding: '16px 0', borderTop: '1px solid #e2e8f0', textAlign: 'center', color: '#64748b', fontSize: 13 }}>
+          <span>© {new Date().getFullYear()} <a href="https://vezolabs.com/" target="_blank" rel="noopener noreferrer" style={{ color: '#722ed1', fontWeight: 600 }}>VezoLabs</a>. All rights reserved. | </span>
+          <a href="https://vezolabs.com/plugins/pimcore-cloud-storage" target="_blank" rel="noopener noreferrer" style={{ color: '#475569', textDecoration: 'underline' }}>
+            Plugin Details & Demo
+          </a>
+          <span> · </span>
+          <a href="https://vezolabs.com/contact" target="_blank" rel="noopener noreferrer" style={{ color: '#475569', textDecoration: 'underline' }}>
+            Contact & Support
+          </a>
+        </div>
       </div>
     </ConfigProvider>
   );
