@@ -71,6 +71,8 @@ services:
     # Webpack Entrypoint for Studio UI
     Vezolabs\CloudStorageBundle\Webpack\WebpackEntryPointProvider:
         public: true
+        tags:
+            - { name: pimcore_studio_ui.webpack_entry_point_provider }
 
     # Controllers
     Vezolabs\CloudStorageBundle\Controller\Api\StudioCloudStorageApiController:

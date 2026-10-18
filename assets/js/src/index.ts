@@ -1,48 +1,111 @@
 import { CloudStoragePage } from './pages/CloudStoragePage';
 
+function resolveService(container: any, ids: string[]) {
+  if (!container) return null;
+  for (const id of ids) {
+    try {
+      if (typeof container.isBound === 'function' && container.isBound(id)) {
+        return container.get(id);
+      }
+    } catch (_) {}
+    try {
+      const svc = container.get(id);
+      if (svc) return svc;
+    } catch (_) {}
+  }
+  return null;
+}
+
+let isRegistered = false;
+
+function registerCloudStorage(container: any) {
+  if (isRegistered || !container) return;
+  isRegistered = true;
+
+  try {
+    // 1. Register Widget in Studio Widget Registry
+    const widgetRegistry = resolveService(container, [
+      'WidgetManagerService',
+      'widgetManager',
+      'App/WidgetManager/WidgetRegistry',
+      'widgetRegistry',
+    ]);
+
+    if (widgetRegistry && typeof widgetRegistry.registerWidget === 'function') {
+      widgetRegistry.registerWidget({
+        name: 'cloud-storage',
+        component: CloudStoragePage,
+      });
+    }
+
+    // 2. Register Navigation Entry in Studio Main Nav Registry
+    const mainNavRegistry = resolveService(container, [
+      'MainNavRegistry',
+      'mainNavRegistry',
+      'App/MainNavRegistry/MainNavRegistry',
+    ]);
+
+    if (mainNavRegistry && typeof mainNavRegistry.registerMainNavItem === 'function') {
+      // Primary: Under System menu
+      mainNavRegistry.registerMainNavItem({
+        path: 'System/Cloud Storage',
+        label: 'Cloud Storage',
+        order: 1060,
+        widgetConfig: {
+          name: 'cloud-storage',
+          id: 'cloud-storage',
+          component: 'cloud-storage',
+          config: {
+            title: 'Cloud Storage Manager',
+            translationKey: 'Cloud Storage',
+            icon: {
+              type: 'name',
+              value: 'cloud',
+            },
+          },
+        },
+      });
+
+      // Secondary shortcut: Under Asset Management
+      mainNavRegistry.registerMainNavItem({
+        path: 'Asset Management/Cloud Storage',
+        label: 'Cloud Storage',
+        order: 1050,
+        widgetConfig: {
+          name: 'cloud-storage',
+          id: 'cloud-storage',
+          component: 'cloud-storage',
+          config: {
+            title: 'Cloud Storage Manager',
+            translationKey: 'Cloud Storage',
+            icon: {
+              type: 'name',
+              value: 'cloud',
+            },
+          },
+        },
+      });
+    }
+  } catch (e) {
+    console.error('[Cloud Storage] Error registering Studio UI components:', e);
+  }
+}
+
 export const VezolabsCloudStoragePlugin = {
   name: 'VezolabsCloudStorageBundle',
   priority: 15,
 
   onInit: ({ container }: { container: any }) => {
-    try {
-      // 1. Register Main Settings Widget
-      const widgetRegistry = container.get('widgetRegistry') || container.get('App/WidgetManager/WidgetRegistry');
-      if (widgetRegistry?.registerWidget) {
-        widgetRegistry.registerWidget({
-          name: 'cloud-storage',
-          component: CloudStoragePage,
-        });
-      }
+    registerCloudStorage(container);
+  },
 
-      // 2. Register Navigation Entry: Settings -> Cloud Storage
-      const mainNavRegistry = container.get('mainNavRegistry') || container.get('App/MainNavRegistry/MainNavRegistry');
-      if (mainNavRegistry?.registerMainNavItem) {
-        mainNavRegistry.registerMainNavItem({
-          path: 'Settings/Cloud Storage',
-          label: 'Cloud Storage',
-          order: 1060,
-          permission: 'PIMCORE_CLOUD_STORAGE_VIEW',
-          widgetConfig: {
-            name: 'cloud-storage',
-            id: 'cloud-storage',
-            component: 'cloud-storage',
-            config: {
-              translationKey: 'Cloud Storage',
-              icon: {
-                type: 'name',
-                value: 'cloud',
-              },
-            },
-          },
-        });
-      }
-    } catch (e) {
-      console.error('[Cloud Storage] Plugin registration error:', e);
+  onStartup: ({ container }: { container?: any } = {}) => {
+    if (container) {
+      registerCloudStorage(container);
     }
   },
+};
 
-  onStartup: () => {
-    console.log('[Cloud Storage] Plugin initialized successfully.');
-  },
+export default {
+  VezolabsCloudStoragePlugin,
 };
